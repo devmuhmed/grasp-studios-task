@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +18,16 @@ Route::get('/', function () {
     return view('layout');
 });
 
-Route::get('/login', function () {
-    return view('auth.login');
+Auth::routes();
+
+Route::post('logout', function () {
+    Auth::logout();
+    return redirect('/login');
+})->name('logout');
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::resource('/task', App\Http\Controllers\TaskController::class);
+    Route::get('/tasks/filter', [App\Http\Controllers\TaskController::class,'filter'])->name('tasks.filter');
+    Route::post('/comment/{task}', [App\Http\Controllers\CommentController::class,'store'])->name('comment.store');
+
 });

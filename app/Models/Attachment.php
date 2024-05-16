@@ -11,7 +11,7 @@ class Attachment extends Model
 
     protected $fillable = ['task_id', 'file_path'];
 
-    public function task()
+    public function task(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Task::class);
     }

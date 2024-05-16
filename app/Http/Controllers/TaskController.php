@@ -19,24 +19,27 @@ class TaskController extends Controller
         'in_progress' => 'In Progress',
         'completed' => 'Completed'
     ];
+
     public function __construct()
     {
         $this->middleware('auth');
     }
+
     public function index()
     {
         $status = $this->status;
-        $userTasks = auth()->user()->tasks()->latest()->get();
-        $assignedTasks = auth()->user()->assignedTasks()->latest()->get();
-        $tasks = $userTasks->merge($assignedTasks);
+        $tasks = Task::with('creator.assignedTasks')
+            ->filter(request()->only(['status']))
+            ->paginate();
 
-        return view('dashboard.task', compact('status','tasks'));
+        return view('dashboard.task', compact('status', 'tasks'));
     }
 
     public function show(Task $task)
     {
         return view('dashboard.task-show', compact('task'));
     }
+
     public function create()
     {
         $status = $this->status;
@@ -54,15 +57,7 @@ class TaskController extends Controller
         if ($assignedUsers) {
             $task->assignedUsers()->sync($assignedUsers);
         }
-
-        if ($file) {
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('attachments'), $fileName);
-            $task->attachments()->create([
-                'attachment' => $file,
-                'file_path' => $fileName
-            ]);
-        }
+        $this->uploadImage($file, $task);
 
         return redirect()->route('task.index');
     }
@@ -71,7 +66,7 @@ class TaskController extends Controller
     {
         $status = $this->status;
         $users = User::all();
-        $assignedUsers = $task->assignedUsers->pluck('id','name')->toArray();
+        $assignedUsers = $task->assignedUsers->pluck('id', 'name')->toArray();
         return view('dashboard.task-edit', compact('status', 'users', 'task', 'assignedUsers'));
     }
 
@@ -85,15 +80,7 @@ class TaskController extends Controller
         if ($assignedUsers) {
             $task->assignedUsers()->sync($assignedUsers);
         }
-
-        if ($file) {
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('attachments'), $fileName);
-            $task->attachments()->create([
-                'attachment' => $file,
-                'file_path' => $fileName
-            ]);
-        }
+        $this->uploadImage($file, $task);
 
         return redirect()->route('task.index');
     }
@@ -104,20 +91,13 @@ class TaskController extends Controller
         return redirect()->route('task.index');
     }
 
-    public function filter(Request $request)
+    private function uploadImage($file, $task)
     {
-        $status = $this->status;
-        if($request->status !== 'all'){
-            $userTasks = auth()->user()->tasks()->where('status', request('status'))->latest()->get();
-            $assignedTasks = auth()->user()->assignedTasks()->where('status', request('status'))->latest()->get();
-            $tasks = $userTasks->merge($assignedTasks);
-        }else{
-            $userTasks = auth()->user()->tasks()->latest()->get();
-            $assignedTasks = auth()->user()->assignedTasks()->latest()->get();
-            $tasks = $userTasks->merge($assignedTasks);
-        }
-
-
-        return view('dashboard.task-list', compact('status','tasks'));
+        $fileName = time().'_'.$file->getClientOriginalName();
+        $file->move(public_path('attachments'), $fileName);
+        $task->attachments()->create([
+            'attachment' => $file,
+            'file_path' => $fileName
+        ]);
     }
 }

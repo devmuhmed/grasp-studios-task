@@ -25,17 +25,17 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function tasks()
+    public function tasks(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Task::class);
     }
 
-    public function assignedTasks()
+    public function assignedTasks(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(Task::class, 'task_user', 'user_id', 'task_id');
     }
 
-    public function comments()
+    public function comments(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Comment::class);
     }

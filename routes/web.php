@@ -27,7 +27,5 @@ Route::post('logout', function () {
 
 Route::group(['middleware' => 'auth'], function () {
     Route::resource('/task', App\Http\Controllers\TaskController::class);
-    Route::get('/tasks/filter', [App\Http\Controllers\TaskController::class,'filter'])->name('tasks.filter');
     Route::post('/comment/{task}', [App\Http\Controllers\CommentController::class,'store'])->name('comment.store');
-
 });

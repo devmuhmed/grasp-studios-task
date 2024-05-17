@@ -32,18 +32,17 @@
                         @endforeach
                     </ul>
                 </div>
-                <div class="mb-3">
-                    <h5>Attachments</h5>
-                    @if($task->attachments->isNotEmpty())
+                @if(filled($task->attachments))
+                    <div class="mb-3">
+                        <h5>Attachments</h5>
                         @foreach($task->attachments as $attachment)
                             <a href="{{ asset('attachments/' . $attachment->file_path) }}" target="_blank">
-                                <img src="{{ asset('attachments/' . $attachment->file_path) }}" alt="{{ $attachment->name }}" class="attachment-img">
+                                <img src="{{ asset('attachments/' . $attachment->file_path) }}"
+                                     alt="{{ $attachment->name }}" class="attachment-img">
                             </a>
                         @endforeach
-                    @else
-                        <p>No attachments</p>
-                    @endif
-                </div>
+                    </div>
+                @endif
                 <div class="mb-3">
                     <h5>Add Comment</h5>
                     <form action="{{ route('comment.store', $task) }}" method="post">
@@ -55,14 +54,16 @@
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
-                <div>
-                    <h5>Comments</h5>
-                    @foreach($task->comments as $comment)
-                        <div class="comment">
-                            <p>{{ $comment->user->name }} : {{ $comment->comment }}</p>
-                        </div>
-                    @endforeach
-                </div>
+                @if(filled($task->comments))
+                    <div>
+                        <h5>Comments</h5>
+                        @foreach($task->comments as $comment)
+                            <div class="comment">
+                                <p>{{ $comment->user->name }} : {{ $comment->comment }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     </div>

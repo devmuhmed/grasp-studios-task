@@ -59,7 +59,7 @@
                     <h5>Comments</h5>
                     @foreach($task->comments as $comment)
                         <div class="comment">
-                            <p>{{ $comment->comment }}</p>
+                            <p>{{ $comment->user->name }} : {{ $comment->comment }}</p>
                         </div>
                     @endforeach
                 </div>

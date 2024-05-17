@@ -9,7 +9,7 @@
 
 
 ## How could you install and make a project working After Clone
-update .env file your database name and it's your own credentials
+update .env file your database with it's your own credentials and generate your app_key
 
 first make sure to install the composer requirements
 ```php
@@ -26,6 +26,12 @@ third run seeder this step will generate four users and 100 tasks per user rando
 ```php
 php artisan db:seed
 ```
+
+last thing that will do for storage the attachments
+```php
+php artisan storage:link
+```
+
 the credentials of the user to login
 ```php
 email => "mohamed@graspstudios.co"

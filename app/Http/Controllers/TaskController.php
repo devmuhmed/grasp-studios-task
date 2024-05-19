@@ -93,6 +93,9 @@ class TaskController extends Controller
 
     private function uploadImage($file, $task)
     {
+        if (!$file) {
+            return;
+        }
         $fileName = time().'_'.$file->getClientOriginalName();
         $file->move(public_path('attachments'), $fileName);
         $task->attachments()->create([

@@ -34,6 +34,9 @@ class Task extends Model
 
     public function scopeFilter($query, array $filters): Builder
     {
+        if(data_get($filters,'status') == "all") {
+            return $query;
+        }
         return $query->when(
             data_get($filters, 'status'),
             fn ($q, $status) =>
